@@ -28,6 +28,11 @@
 </template>
 
 <script>
+
+import APIService from '../../services/api'
+
+const apiService = new APIService()
+
 export default {
     data(){
         return{
@@ -40,20 +45,23 @@ export default {
     methods: {
         doLogin(){
             this.loader = true
-            if(this.user.email == "romadhanedy@gmail.com"){
+            apiService.authLogin(this.user).then(response => {
                 this.loader = false
-                this.alertSuccess = true
-                setTimeout(() => {
-                    this.$session.set("logged", 1)
-                    this.$router.replace({name: "Home"})
-                }, 1000)
-            } else {
-                this.loader = false;
-                this.alertFail = true
-                setTimeout(() => {
-                    this.alertFail = false
-                }, 3000)
-            }
+                console.log(response.data)
+                if(response.data == ""){
+                    this.alertFail = true
+                    setTimeout(() => {
+                        this.alertFail = false
+                    }, 3000)
+                }
+                else{
+                    this.alertSuccess = true
+                    setTimeout(() => {
+                        this.$session.set("logged", 1)
+                        this.$router.replace({name: "Home"})
+                    }, 1000)
+                }
+            })
         }
     },
     mounted(){
